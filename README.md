@@ -1,3 +1,5 @@
+# Jinseigamu
+
 ## Run the app
 
 ```sh
