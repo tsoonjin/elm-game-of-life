@@ -1,7 +1,3 @@
-# elm-caesar-cipher
-
-🌳 Caesar Cipher made in Elm!
-
 ## Run the app
 
 ```sh
