@@ -1,4 +1,4 @@
-module Grid exposing (initGrid, getCell, getNextCellValue, initRandomGrid, initWorld, Grid, flatten, tickWorld)
+module Grid exposing (initGrid, getCell, getNextCellValue, initRandomGrid, initWorld, Grid, flatten, tickWorld, initEmptyWorld, setCellValue, initWorldWithSeed)
 import Array
 import Randomizer exposing (generateInt, generateList)
 import Random
@@ -27,6 +27,19 @@ initRandomGrid col row range listSoFar =
 
 
 
+initEmptyWorld: Int -> Int -> Grid
+initEmptyWorld col row =
+    Array.repeat row (Array.repeat col 0)
+
+initWorldWithSeed: Random.Seed -> Int -> Int -> Int -> (Grid, Random.Seed)
+initWorldWithSeed initialSeed col row range =
+    let
+        (initialList, nextSeed) = generateList col (0, range) initialSeed
+        (generatedRandomList, _) = initRandomGrid col row range ([initialList], nextSeed)
+    in
+        (List.map Array.fromList generatedRandomList
+        |> Array.fromList, nextSeed)
+
 initWorld: Random.Seed -> Int -> Int -> Int -> Grid
 initWorld initialSeed col row range =
     let
@@ -45,6 +58,14 @@ tickWorld grid =
         nextWorld = Array.indexedMap (\row_index -> \row -> (Array.indexedMap (\col_index -> \cell -> getNextCellValue grid col_index row_index) row)) grid
     in
         nextWorld
+
+setCellValue: Int -> Int -> Int -> Grid -> Grid
+setCellValue newVal col row grid =
+    let
+        currCol = Maybe.withDefault (Array.fromList []) (Array.get row grid)
+        newCol = Array.set col newVal currCol
+    in
+        Array.set row newCol grid
 
 getNextCellValue: Grid -> Int -> Int -> Int
 getNextCellValue grid col row =
